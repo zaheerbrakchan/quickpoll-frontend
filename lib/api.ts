@@ -57,6 +57,7 @@ getPollById: async (pollId: number) => {
   },
 
 
+  // Create Poll API
 createPoll: async (
   token: string,
   data: { title: string; description: string; options: { text: string }[] }
@@ -78,6 +79,20 @@ createPoll: async (
 
   return res.json();
 },
+
+// Delete Poll API
+deletePoll: async (token: string, pollId: string) => {
+  const res = await fetch(`${BASE_URL}/polls/${pollId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) throw new Error("Failed to delete poll");
+  return await res.json();
+},
+
+
 // ----- VOTES -----
 vote: async (token: string, pollId: string, optionId: string) => {
   const res = await fetch(`${BASE_URL}/votes/`, {

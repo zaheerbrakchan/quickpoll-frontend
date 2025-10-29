@@ -22,7 +22,7 @@ interface Poll {
 }
 
 export default function PollList() {
-  const { token } = useAuth();
+  const { token ,user} = useAuth();
   const [polls, setPolls] = useState<Poll[]>([]);
   const [loading, setLoading] = useState(true);
   const wsRef = useRef<WebSocket | null>(null);
@@ -57,11 +57,16 @@ export default function PollList() {
       try {
         const data = JSON.parse(event.data);
 
-        // ✅ Only handle new polls
+        // handle new polls
         if (data.type === "new_poll" && data.id && data.title) {
           setPolls((prev) => [data, ...prev]);
           console.log("🆕 New poll added:", data.title);
         }
+       // Handle poll deletion
+      if (data.type === "poll_deleted" && data.poll_id) {
+        setPolls((prev) => prev.filter((p) => p.id !== data.poll_id));
+        console.log("🗑️ Poll deleted:", data.poll_id);
+      }
       } catch (err) {
         console.error("WebSocket parse error:", err);
       }
@@ -100,6 +105,8 @@ export default function PollList() {
           created_at={poll.created_at}
           created_by={poll.created_by || "Anonymous"}
           userToken={token ?? ""}
+          currentUsername={user ?? undefined}
+
         />
       ))}
     </div>
