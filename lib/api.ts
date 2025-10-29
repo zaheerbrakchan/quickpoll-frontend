@@ -13,15 +13,31 @@ export const api = {
     return res.json();
   },
 
-  login: async (username: string, email: string, password: string) => {
+login: async (username: string, password: string) => {
+  try {
     const res = await fetch(`${BASE_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username,email, password }),
+      body: JSON.stringify({ username, password }),
     });
-    if (!res.ok) throw new Error("Login failed");
-    return res.json();
-  },
+
+    // ❌ Handle invalid credentials or server errors gracefully
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      return {
+        error: errorData.detail || "Invalid username or password",
+      };
+    }
+
+    // ✅ Success — return parsed JSON
+    return await res.json();
+  } catch (err) {
+    console.error("API login error:", err);
+    return {
+      error: "Network error. Please check your connection and try again.",
+    };
+  }
+},
 
   // ----- POLLS -----
   getPolls: async () => {
@@ -76,18 +92,49 @@ vote: async (token: string, pollId: string, optionId: string) => {
   return res.json();
 },
 
-// ----- LIKES -----
-likePoll: async (token: string, pollId: string) => {
-  const res = await fetch(`${BASE_URL}/likes/`, {
-    method: "POST",
+
+// Fetch if the current user already voted in a poll
+
+getUserVote: async (token: string, pollId: string) => {
+  const res = await fetch(`${BASE_URL}/votes/user/${pollId}`, {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ poll_id: pollId }),
   });
-  if (!res.ok) throw new Error("Failed to like poll");
-  return res.json();
+
+  if (!res.ok) throw new Error("Failed to fetch user vote");
+  return res.json(); // returns { voted: true/false, option_id?: string }
 },
+
+// ----- LIKES -----
+likePoll: async (token: string, pollId: string) => {
+    console.log("🔍 token sent to getUserLike:", token);
+  // POST to /likes/{pollId} (no body required)
+  const res = await fetch(`${BASE_URL}/likes/${pollId}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  if (!res.ok) throw new Error("Failed to toggle like");
+  return res.json(); // expected { liked: bool, likes: number }
+},
+
+getUserLike: async (token: string, pollId: string) => {
+    console.log("🔍 token sent to getUserLike:", token);
+
+  const res = await fetch(`${BASE_URL}/likes/user/${pollId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) throw new Error("Failed to fetch like status");
+  return res.json(); // expected { liked: bool }
+},
+
+
 
 };

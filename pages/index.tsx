@@ -31,7 +31,8 @@ export default function HomePage() {
   if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
+<main className="min-h-screen bg-[lightslategrey] text-gray-900">
+
       <h1 className="text-3xl font-bold mb-6 text-center">🗳️ QuickPoll</h1>
       {polls.length === 0 ? (
         <p className="text-center text-gray-600">No polls yet. Be the first to create one!</p>
