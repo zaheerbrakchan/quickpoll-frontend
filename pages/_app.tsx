@@ -7,6 +7,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <AuthProvider>
       <div className="min-h-screen bg-[lightslategrey] text-gray-900">
+        
         <Navbar />
         <main className="p-6">
           <Component {...pageProps} />
