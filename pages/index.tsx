@@ -37,7 +37,8 @@ export default function HomePage() {
       {polls.length === 0 ? (
         <p className="text-center text-gray-600">No polls yet. Be the first to create one!</p>
       ) : (
-        <PollList polls={polls} />
+        <PollList />
+
       )}
     </main>
   );
