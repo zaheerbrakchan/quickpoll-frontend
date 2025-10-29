@@ -35,7 +35,7 @@ export default function PollList() {
     wsRef.current = ws;
 
     ws.onopen = () => console.log("✅ Connected to global poll WebSocket");
-    
+
 ws.onmessage = (event) => {
   try {
     const data = JSON.parse(event.data);
@@ -84,7 +84,7 @@ ws.onmessage = (event) => {
           likes={poll.likes_count}
           created_at={poll.created_at}
           created_by={poll.created_by || "Anonymous"}
-          userToken={token}
+          userToken={token ?? ""}
         />
       ))}
     </div>
