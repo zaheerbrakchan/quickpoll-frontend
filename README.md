@@ -1,40 +1,150 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# 🗳️ QuickPoll – Frontend
 
-## Getting Started
+A real-time polling web application built with **Next.js**, **TypeScript**, and **WebSockets**, enabling users to create, vote, and like polls with live updates.
 
-First, run the development server:
+👉 **Live Demo:** https://quickpoll-frontend-sable.vercel.app/
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🚀 Features
+
+- 🔐 **Authentication:** Register / Login users with JWT-based auth.
+- 🗳️ **Create & Vote on Polls:** Users can create polls and vote in real time.
+- ❤️ **Like Polls:** Like or unlike polls instantly.
+- ⚡ **Real-time Updates:** WebSocket integration ensures polls, likes, and votes update globally without refresh.
+- 🌗 **Responsive & Modern UI:** Built with TailwindCSS and Framer Motion for smooth animations.
+- 🧭 **Protected Interactions:** Guests can view polls but must log in to interact.
+
+---
+
+## 🧩 System Design Overview
+
+### 🏗️ Architecture
+
+```text
+Frontend (Next.js + TypeScript)
+│
+│  ├── /pages
+│  │     ├── index.tsx        # Home page displaying polls
+│  │     ├── create.tsx       # Poll creation page
+│  │     ├── login.tsx        # User login
+│  │     └── register.tsx     # User registration
+│  │
+│  ├── /components
+│  │     ├── PollList.tsx     # Fetches and displays all polls
+│  │     ├── PollCard.tsx     # Each poll card with live WebSocket updates
+│  │     ├── Navbar.tsx       # Navigation bar with auth buttons
+│  │     
+│  │
+│  ├── /hooks
+│  │     └── useAuth.ts       # Custom hook for auth context
+│  │
+│  ├── /lib
+│  │     └── api.ts           # Handles all REST API calls
+│  │
+│  ├── /styles
+│  │     └── globals.css      # Tailwind base styles
+│  │
+│  ├── .env.local.example     # Environment variable sample
+│  └── next.config.js
+│
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### ⚙️ Data Flow
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+1. **Frontend → Backend (REST):**
+   - Auth (`/login`, `/register`)
+   - Fetch polls, votes, likes, delete poll
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+2. **Backend → Frontend (WebSocket):**
+   - New poll creation and delete poll broadcast 
+   - Live vote & like updates
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🧠 Tech Stack
 
-## Learn More
+| Category | Technologies |
+|-----------|---------------|
+| Framework | Next.js 16 (Turbopack) |
+| Language | TypeScript |
+| Styling | TailwindCSS |
+| Animations | Framer Motion |
+| Real-time | WebSocket |
+| Hosting | Vercel |
+| Auth | JWT (via backend) |
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+## 🛠️ Local Setup
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/your-username/quickpoll-frontend.git
+cd quickpoll-frontend
+```
 
-## Deploy on Vercel
+### 2️⃣ Install Dependencies
+```bash
+npm install
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 3️⃣ Setup Environment Variables
+I didn't kept in .env file as of now as we have less URLS so please find below
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+on the top of api.ts file in lib folder add base url like below
+BASE_URL=https://your-backend-url.onrender.com
+
+in PollCard.tsx and PollList.tsx please replace wsUrl with your ws url
+wsUrl=wss://your-backend-url.onrender.com/ws/polls/{id}
+
+in PollList.tsx please replace wsUrl with your ws url
+wsUrl=wss://your-backend-url.onrender.com/ws/polls/
+
+```
+
+### 4️⃣ Run Locally
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) 🎉
+
+### 5️⃣ Build for Production
+```bash
+npm run build
+npm start
+```
+
+---
+
+## 🔌 API Reference (Frontend Usage)
+
+| Action | Endpoint | Method |
+|--------|-----------|--------|
+| Fetch all polls | `/polls` | GET |
+| Create poll | `/polls` | POST |
+| Vote | `/polls/{poll_id}/vote` | POST |
+| Like poll | `/polls/{poll_id}/like` | POST |
+| WebSocket stream | `/ws/polls` | WS |
+
+---
+
+## 🌐 Deployment
+
+This frontend is deployed on **Vercel**  
+Each push to `main` triggers automatic deployment via GitHub integration.
+
+---
+
+
+
+---
+
+## 👨‍💻 Contributors
+
+- [Zaheer Brakchan](https://github.com/zaheerbrakchan)
+- Backend + Frontend Integration
+- WebSocket & Real-time updates
+
+---
