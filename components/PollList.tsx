@@ -5,9 +5,25 @@ import PollCard from "./PollCard";
 import { useAuth } from "@/hooks/useAuth";
 import { api } from "@/lib/api";
 
+interface Option {
+  id: string;
+  text: string;
+  votes?: number;
+}
+
+interface Poll {
+  id: string;
+  title: string;
+  description: string;
+  options: Option[];
+  likes_count: number;
+  created_at: string;
+  created_by?: string;
+}
+
 export default function PollList() {
   const { token } = useAuth();
-  const [polls, setPolls] = useState<any[]>([]);
+  const [polls, setPolls] = useState<Poll[]>([]);
   const [loading, setLoading] = useState(true);
   const wsRef = useRef<WebSocket | null>(null);
 
@@ -31,26 +47,25 @@ export default function PollList() {
     const wsUrl =
       process.env.NEXT_PUBLIC_WS_URL ||
       "wss://quickpoll-backend-production.up.railway.app/ws/polls";
+
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
     ws.onopen = () => console.log("✅ Connected to global poll WebSocket");
 
-ws.onmessage = (event) => {
-  try {
-    const data = JSON.parse(event.data);
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
 
-    // ✅ Only handle new polls
-    if (data.type === "new_poll" && data.id && data.title) {
-      setPolls((prev) => [data, ...prev]);
-      console.log("🆕 New poll added:", data.title);
-    }
-  } catch (err) {
-    console.error("WebSocket parse error:", err);
-  }
-};
-
-
+        // ✅ Only handle new polls
+        if (data.type === "new_poll" && data.id && data.title) {
+          setPolls((prev) => [data, ...prev]);
+          console.log("🆕 New poll added:", data.title);
+        }
+      } catch (err) {
+        console.error("WebSocket parse error:", err);
+      }
+    };
 
     ws.onclose = () => console.log("❌ Global poll WebSocket closed");
     ws.onerror = (err) => console.error("WebSocket error:", err);
