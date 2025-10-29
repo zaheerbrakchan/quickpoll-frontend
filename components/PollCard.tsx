@@ -135,13 +135,7 @@ export default function PollCard({
     try {
       await api.vote(userToken, id, selected);
       setSubmitted(true);
-      setVoteData((prev) =>
-        prev.map((opt) =>
-          opt.id === selected
-            ? { ...opt, votes: (opt.votes || 0) + 1 }
-            : opt
-        )
-      );
+
     } catch (err) {
       console.error("Vote failed:", err);
     }
